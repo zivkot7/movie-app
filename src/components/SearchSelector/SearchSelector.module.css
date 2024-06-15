@@ -1,0 +1,18 @@
+.searchSelectorContainer {
+  position: absolute;
+  min-height: 100px;
+  width: 61%;
+  background-color: #131313;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  z-index: 1000;
+}
+.resultsText {
+  padding: 10px 10px 0px 20px;
+  color: #969696;
+  font-size: 16px;
+}
+
+.item {
+  padding: 10px 10px 0px 20px;
+}

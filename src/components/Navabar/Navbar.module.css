@@ -1,0 +1,32 @@
+.initialPage {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  left: 0;
+  width: 100%;
+  padding: 30px 150px 0px 150px;
+  z-index: 1000;
+}
+.otherPages {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  left: 0;
+  width: 100%;
+  background-color: rgb(33, 44, 55);
+  padding: 10px 150px 10px 150px;
+  z-index: 1000;
+}
+
+.title {
+  color: #fbc500;
+  font-weight: 500;
+}
+.inputsBox {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+}

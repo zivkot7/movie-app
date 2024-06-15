@@ -1,0 +1,27 @@
+.container {
+  padding: 20px;
+}
+
+.containerCompact {
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.movieList {
+  display: flex;
+  overflow-x: auto;
+  /* flex-wrap: wrap; */
+  gap: 5px;
+  padding-left: 100px;
+  padding-top: 30px;
+}
+
+.movie {
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.poster {
+  border-radius: 8px;
+}

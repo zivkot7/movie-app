@@ -1,0 +1,27 @@
+.selectContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.select {
+  width: 140px;
+  padding: 10px 20px 10px 35px;
+  border: 0px;
+  border-radius: 3px;
+  font-size: 1em;
+}
+
+.genres {
+  position: relative;
+}
+
+.arrow {
+  font-size: 12px;
+  margin-left: 5px;
+}
+
+.buttonContentMultiSelect {
+  display: flex;
+  justify-content: space-around;
+}

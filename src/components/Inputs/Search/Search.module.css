@@ -1,0 +1,21 @@
+.searchContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  font-size: 1.2em;
+  color: #aaa;
+}
+
+.input {
+  width: 500px;
+  padding: 10px 10px 10px 40px;
+  border-width: 0px;
+  border-radius: 3px;
+  font-size: 1em;
+}

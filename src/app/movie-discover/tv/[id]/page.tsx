@@ -4,7 +4,6 @@ import { useParams } from "next/navigation";
 import styles from "./style.module.css";
 import Image from "next/image";
 import MovieCard from "movie-app/components/MovieCard";
-import { useSelector } from "react-redux";
 
 const MovieDetails = () => {
   const { id } = useParams();

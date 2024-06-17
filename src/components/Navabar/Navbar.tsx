@@ -64,6 +64,10 @@ function Navbar() {
     router.push(`/`);
   };
 
+  const handleMovieClick = (query: string) => {
+    router.push(`/movie-discover/search?q=${query}`);
+  };
+
   return (
     <div className={containerStyle}>
       <h2 className={styles.title} onClick={handleHomeClick}>
@@ -75,6 +79,7 @@ function Navbar() {
           onSelect={(value: any) => console.log(value)}
           onChange={handleSearch}
           options={searchOptions}
+          onViewAllClick={() => handleMovieClick(query)}
         />
         <Select
           options={options}

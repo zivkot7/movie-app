@@ -8,6 +8,7 @@ export type SearchSelectorProps = {
   options: any;
   query: string;
   onChange: any;
+  onViewAllClick: () => void;
 };
 
 const SearchSelector = ({
@@ -15,6 +16,7 @@ const SearchSelector = ({
   query,
   onChange,
   options,
+  onViewAllClick,
 }: SearchSelectorProps) => {
   const handleSelect = (item: any) => {
     onSelect(item);
@@ -27,6 +29,9 @@ const SearchSelector = ({
       {query && (
         <div className={styles.searchSelectorContainer}>
           <p className={styles.resultsText}>Searched results:</p>
+          {options.length > 0 ? null : (
+            <p className={styles.noResults}>No results found</p>
+          )}
           {options.slice(0, 5).map((item: any) => (
             <div key={item.id} onClick={() => handleSelect(item.id)}>
               <div className={styles.item}>
@@ -50,7 +55,9 @@ const SearchSelector = ({
               </div>
             </div>
           ))}
-          <button>View all results</button>
+          <button className={styles.viewAll} onClick={onViewAllClick}>
+            View all results
+          </button>
         </div>
       )}
     </div>

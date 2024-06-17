@@ -14,6 +14,9 @@
   color: #969696;
   font-size: 16px;
 }
+.noResults {
+  padding: 20px;
+}
 
 .item {
   display: flex;
@@ -33,6 +36,15 @@
   flex-direction: column;
   justify-content: space-between;
   margin-left: 10px;
+}
+.viewAll {
+  background-color: transparent;
+  border-width: 0px;
+  padding: 10px;
+  font-size: 14px;
+}
+.viewAll:hover {
+  background-color: rgba(109, 109, 109, 0.277);
 }
 @media (max-width: 2560px) {
   .searchSelectorContainer {

@@ -21,12 +21,43 @@
 }
 
 .title {
+  cursor: pointer;
   color: #fbc500;
-  font-weight: 500;
+  font-weight: 500px;
 }
 .inputsBox {
   display: flex;
   align-items: center;
   gap: 20px;
   position: relative;
+}
+
+@media (max-width: 1024px) {
+  .initialPage {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+  }
+  .otherPages {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+  }
+  .inputsBox {
+    right: 50px;
+  }
+}
+@media (max-width: 425px) {
+  .otherPages {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .inputsBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 40px;
+  }
 }

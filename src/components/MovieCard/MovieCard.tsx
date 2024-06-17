@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Image from "next/image";
 import styles from "./MovieCard.module.css";
 
@@ -6,6 +6,11 @@ interface MovieCardProps {
   type: "movie" | "tv";
   movie: {
     title: string;
+    name: string;
+    first_air_date: number;
+    original_name: string;
+    number_of_seasons: number;
+    number_of_episodes: number;
     poster_path: string;
     runtime: number;
     original_title: string;
@@ -30,6 +35,27 @@ interface MovieCardProps {
 
 const MovieCard = ({ movie, type }: MovieCardProps) => {
   console.log("first", movie);
+
+  const memoizedData = useMemo(() => {
+    return {
+      displayTitle: type === "movie" ? movie?.title : movie?.name,
+      displayDate:
+        type === "movie" ? movie?.release_date : movie?.first_air_date,
+      displayOriginalTitle:
+        type === "movie" ? movie?.original_title : movie?.original_name,
+      displayOverview: movie?.overview,
+      displayRuntime: movie?.runtime,
+      displayVoteAverage: movie?.vote_average.toFixed(1),
+      displayVoteCount: movie?.vote_count,
+      displayProductionCountries: movie?.production_countries
+        .map((country) => country.name)
+        .join(", "),
+      displayStatus: movie?.status,
+      displayEpisodes: movie?.number_of_episodes,
+      displaySeasons: movie?.number_of_seasons,
+    };
+  }, [movie, type]);
+
   return (
     <div className={styles.movieCard}>
       <div className={styles.imageColumn}>
@@ -52,41 +78,51 @@ const MovieCard = ({ movie, type }: MovieCardProps) => {
               </span>
             ))}
           </div>
-          <p className={styles.sectionTitle}>Runtime</p>
-          <p className={styles.runtimeTxt}>{movie?.runtime} min</p>
+          {type === "movie" ? (
+            <>
+              <p className={styles.sectionTitle}>Runtime</p>
+              <p className={styles.runtimeTxt}>
+                {memoizedData.displayRuntime} min
+              </p>
+            </>
+          ) : (
+            <>
+              <p className={styles.sectionTitle}>Number of seasons</p>
+              <p className={styles.seasonsTxt}>{memoizedData.displaySeasons}</p>
+              <p className={styles.sectionTitle}>Number of episodes</p>
+              <p className={styles.episodesTxt}>
+                {memoizedData.displayEpisodes}
+              </p>
+            </>
+          )}
         </div>
       </div>
       <div className={styles.detailsColumn}>
         <div>
           <h2 className={styles.title}>
-            {type === "movie" ? movie?.title : movie?.name} (
-            {movie?.release_date})
+            {memoizedData.displayTitle} ({memoizedData.displayDate})
           </h2>
           <p className={styles.originalTitle}>
-            Original title: {movie?.original_title}
+            Original title: {memoizedData.displayOriginalTitle}
           </p>
-
           <p className={styles.overview}>Description:</p>
-          <p className={styles.overviewTxt}>{movie?.overview}</p>
-
+          <p className={styles.overviewTxt}>{memoizedData.displayOverview}</p>
           <div className={styles.votesBox}>
             <p className={styles.rightSectionTitle}>Vote:</p>
-            <p className={styles.voteTxt}>{movie?.vote_average.toFixed(1)}</p>
+            <p className={styles.voteTxt}>{memoizedData.displayVoteAverage}</p>
             <p className={styles.rightSectionTitle}>Vote count:</p>
-            <p className={styles.voteTxt}>{movie?.vote_count}</p>
+            <p className={styles.voteTxt}>{memoizedData.displayVoteCount}</p>
           </div>
         </div>
-        <div>
+        <div className={styles.productionSection}>
           <p className={styles.rightSectionTitle}>Production countries</p>
           <p className={styles.voteTxt}>
-            {movie?.production_countries
-              .map((country) => country.name)
-              .join(", ")}
+            {memoizedData.displayProductionCountries}
           </p>
         </div>
-        <div>
+        <div className={styles.statusSection}>
           <p className={styles.rightSectionTitle}>Status</p>
-          <p className={styles.sectionTxt}>{movie?.status}</p>
+          <p className={styles.sectionTxt}>{memoizedData.displayStatus}</p>
         </div>
       </div>
     </div>

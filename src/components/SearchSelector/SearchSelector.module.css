@@ -1,7 +1,9 @@
 .searchSelectorContainer {
+  display: flex;
+  flex-direction: column;
   position: absolute;
   min-height: 100px;
-  width: 61%;
+  width: 74%;
   background-color: #131313;
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
@@ -14,5 +16,62 @@
 }
 
 .item {
-  padding: 10px 10px 0px 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 18px;
+  color: white;
+  padding: 10px 20px;
+}
+.item:hover {
+  background-color: rgba(125, 125, 125, 0.267);
+  cursor: pointer;
+}
+.titleAndType {
+  display: flex;
+  height: 3vw;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: 10px;
+}
+@media (max-width: 2560px) {
+  .searchSelectorContainer {
+    width: 78.4%;
+  }
+  .resultsText {
+    font-size: 16px;
+  }
+}
+@media (max-width: 1440px) {
+  .searchSelectorContainer {
+    width: 77%;
+  }
+}
+@media (max-width: 1024px) {
+  .searchSelectorContainer {
+    width: 75.8%;
+  }
+  .resultsText {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 425px) {
+  .searchSelectorContainer {
+    width: 73%;
+    margin-left: 140px;
+  }
+  .resultsText {
+    font-size: 12px;
+  }
+}
+@media (max-width: 375px) {
+  .searchSelectorContainer {
+    width: 70.5%;
+  }
+}
+@media (max-width: 320px) {
+  .searchSelectorContainer {
+    width: 67.5%;
+  }
 }

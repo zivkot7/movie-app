@@ -1,9 +1,9 @@
 import React from "react";
 import { FaCheck } from "react-icons/fa";
-import styles from "./SelectOptions.module.css";
+import styles from "./DropdownOptions.module.css";
 import { DropdownOptionsProps } from "movie-app/types/components";
 
-const SelectOptions = ({
+const DropdownOptions = ({
   options,
   value,
   handleSelectOption,
@@ -39,4 +39,4 @@ const SelectOptions = ({
   );
 };
 
-export default SelectOptions;
+export default DropdownOptions;

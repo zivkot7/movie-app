@@ -51,9 +51,18 @@ const MovieDiscover = () => {
   const actionGenreId = useGenreIdByName("Action");
   const crimeGenreId = useGenreIdByName("Crime");
 
-  const { data: HorrorMovies } = useGetMoviesQuery(horrorGenreId);
-  const { data: ActionMovies } = useGetMoviesQuery(actionGenreId);
-  const { data: CrimeMovies } = useGetMoviesQuery(crimeGenreId);
+  const {
+    data: HorrorMovies,
+    isLoading: horrorLoading,
+  } = useGetMoviesQuery({ genres: [horrorGenreId] }, { skip: !horrorGenreId });
+  const {
+    data: ActionMovies,
+    isLoading: actionLoading,
+  } = useGetMoviesQuery({ genres: [actionGenreId] }, { skip: !actionGenreId });
+  const {
+    data: CrimeMovies,
+    isLoading: crimeLoading,
+  } = useGetMoviesQuery({ genres: [crimeGenreId] }, { skip: !crimeGenreId });
 
   const optionsMovie: Option[] =
     MovieGenres?.genres.map((genre: Genre) => ({
@@ -142,7 +151,7 @@ const MovieDiscover = () => {
         ) : null}
       </div>
       {!isMoviesActive && (
-        <>
+        <div className={styles.listBox}>
           <MovieSection
             type="movie"
             onClick={handleMovieClick}
@@ -155,10 +164,10 @@ const MovieDiscover = () => {
             totalPages={AllMovies?.total_pages || 1}
             onPageChange={handlePageChangeMovies}
           />
-        </>
+        </div>
       )}
       {!isSeriesActive && (
-        <>
+        <div className={styles.listBox}>
           <MovieSection
             type="tv"
             onClick={handleMovieClick}
@@ -171,7 +180,7 @@ const MovieDiscover = () => {
             totalPages={AllTvShows?.total_pages || 1}
             onPageChange={handlePageChangeTv}
           />
-        </>
+        </div>
       )}
       {isMoviesActive && isSeriesActive && (
         <>
@@ -207,10 +216,6 @@ const MovieDiscover = () => {
           />
         </>
       )}
-
-      <Link href="/movie-details" className={styles.button}>
-        Select movie
-      </Link>
     </div>
   );
 };

@@ -3,7 +3,7 @@ import styles from "./Select.module.css";
 import { SelectProps } from "movie-app/types/components";
 import { IoIosStar } from "react-icons/io";
 import { Button } from "movie-app/components/Button";
-import DropdownOptions from "../../SelectOptions";
+import DropdownOptions from "../../DropdownOptions";
 
 const Select = ({
   options,

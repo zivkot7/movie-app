@@ -29,10 +29,13 @@ export const TmdbApi: any = createApi({
     getGenresTv: builder.query<any, void>({
       query: () => "genre/tv/list",
     }),
-    getMovies: builder.query<any, { genres: number; page?: number }>({
+    getMovies: builder.query<any, { genres: number[]; page?: number }>({
       query: ({ genres, page = 1 }) => {
         let params: any = { page };
 
+        if (genres.length) {
+          params.with_genres = genres.join(",");
+        }
         return {
           url: "discover/movie",
           params,

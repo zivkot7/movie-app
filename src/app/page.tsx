@@ -27,7 +27,9 @@ const Home = () => {
       </div>
       <div className={styles.textContainer}>
         <h1 className={styles.title}>
-          Your guide for streaming movies, TV series, and sports
+          Your guide for streaming movies, TV
+          <br />
+          series, and sports
         </h1>
         <p className={styles.subtitle}>
           With MovieApp, find where to stream new, popular, and ongoing content.

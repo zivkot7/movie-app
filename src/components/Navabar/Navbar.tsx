@@ -5,7 +5,7 @@ import Select from "../Inputs/Select/Select";
 import { Option } from "movie-app/types/components";
 import SearchSelector from "../SearchSelector";
 import { useGetSearchQuery } from "movie-app/Service/Movies";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const options: Option[] = [
   { value: 1, label: "Option 1" },
@@ -14,6 +14,7 @@ const options: Option[] = [
 ];
 
 function Navbar() {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [selectedValue, setSelectedValue] = useState<number | null>();
   const pathname = usePathname();
@@ -22,15 +23,15 @@ function Navbar() {
 
   console.log(data);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value);
-  };
+  // const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setQuery(event.target.value);
+  // };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      // handleSearch();
-    }
-  };
+  // const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (event.key === "Enter") {
+  //     // handleSearch();
+  //   }
+  // };
 
   const handleSearch = (value: string) => {
     console.log("Search query:", value);
@@ -41,13 +42,17 @@ function Navbar() {
     setSelectedValue(value);
   };
 
-  const options2 = React.useMemo(() => {
-    if (query) {
-      return ["test-------"];
+  const searchOptions = React.useMemo(() => {
+    if (query && data) {
+      return data.results
+        .filter((item: any) => item.media_type !== "person")
+        .map((item: any) => ({
+          ...item,
+        }));
     }
 
     return [];
-  }, [query]);
+  }, [query, data]);
 
   const { containerStyle } = useMemo(() => {
     const isHomePage = pathname === "/";
@@ -55,15 +60,21 @@ function Navbar() {
     return { isHomePage, containerStyle };
   }, [pathname]);
 
+  const handleHomeClick = () => {
+    router.push(`/`);
+  };
+
   return (
     <div className={containerStyle}>
-      <h2 className={styles.title}>MovieApp</h2>
+      <h2 className={styles.title} onClick={handleHomeClick}>
+        MovieApp
+      </h2>
       <div className={styles.inputsBox}>
         <SearchSelector
           query={query}
           onSelect={(value: any) => console.log(value)}
           onChange={handleSearch}
-          options={options2}
+          options={searchOptions}
         />
         <Select
           options={options}

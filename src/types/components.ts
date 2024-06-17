@@ -14,6 +14,7 @@ export interface ButtonProps {
   onClick?: () => void;
   children: React.ReactNode;
   style?: CSSProperties;
+  disabled?: boolean;
 }
 
 export interface Option {

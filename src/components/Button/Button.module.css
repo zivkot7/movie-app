@@ -1,12 +1,13 @@
 .button {
-  padding: 8px 16px;
+  padding: 10px 16px;
   border-radius: 4px;
   cursor: pointer;
   outline: none;
+  border-width: 0px;
 }
 
 .primary {
-  background-color: #007bff;
+  background-color: #b58e01;
   color: #fff;
 }
 
@@ -24,4 +25,9 @@
 }
 .clear:hover {
   color: white;
+}
+
+.disabled {
+  background-color: grey;
+  cursor: not-allowed;
 }

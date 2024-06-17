@@ -13,9 +13,27 @@
 }
 
 .input {
-  width: 500px;
+  width: 30vw;
   padding: 10px 10px 10px 40px;
   border-width: 0px;
   border-radius: 3px;
-  font-size: 1em;
+  font-size: 18px;
+}
+
+@media (max-width: 1024px) {
+  .input {
+    width: 30vw;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 425px) {
+  .input {
+    width: 90vw;
+  }
+  .searchContainer {
+    display: flex;
+    margin-top: 10px;
+    margin-left: 140px;
+  }
 }

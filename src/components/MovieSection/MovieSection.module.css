@@ -2,26 +2,57 @@
   padding: 20px;
 }
 
-.containerCompact {
-  padding: 20px;
+.movieListCompact {
   display: flex;
   flex-wrap: wrap;
+  gap: 3px;
+  width: 89vw;
+  padding-top: 30px;
+  padding-left: 100px;
 }
 
 .movieList {
   display: flex;
-  overflow-x: auto;
-  /* flex-wrap: wrap; */
+  overflow-x: hidden;
   gap: 5px;
-  padding-left: 100px;
   padding-top: 30px;
+  overflow-y: hidden;
+}
+
+.scrollContainer {
+  display: flex;
+  align-items: center;
+}
+
+.scrollButton {
+  background-color: transparent;
+  color: rgb(83, 83, 83);
+  height: 12vw;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 10px;
+  transition: transform 0.2s ease-in-out;
+}
+.scrollButton:hover {
+  transform: scale(1.2);
+  color: white;
 }
 
 .movie {
   margin-right: 5px;
   cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.movie:hover {
+  transform: scale(1.03);
 }
 
 .poster {
   border-radius: 8px;
+}
+
+.title {
+  color: rgb(84, 144, 211);
 }

@@ -1,0 +1,10 @@
+.paggination {
+  display: flex;
+  align-self: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.pagesCount {
+  margin-left: 20px;
+  margin-right: 20px;
+}

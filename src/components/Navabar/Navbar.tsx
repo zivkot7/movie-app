@@ -16,25 +16,12 @@ const options: Option[] = [
 function Navbar() {
   const router = useRouter();
   const [query, setQuery] = useState("");
-  const [selectedValue, setSelectedValue] = useState<number | null>();
+  const [selectedValue, setSelectedValue] = useState<number | null>(null);
   const pathname = usePathname();
 
   const { data } = useGetSearchQuery(query);
 
-  console.log(data);
-
-  // const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setQuery(event.target.value);
-  // };
-
-  // const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-  //   if (event.key === "Enter") {
-  //     // handleSearch();
-  //   }
-  // };
-
   const handleSearch = (value: string) => {
-    console.log("Search query:", value);
     setQuery(value);
   };
 
@@ -64,8 +51,12 @@ function Navbar() {
     router.push(`/`);
   };
 
-  const handleMovieClick = (query: string) => {
+  const handleViewAllClick = (query: string) => {
     router.push(`/movie-discover/search?q=${query}`);
+  };
+
+  const handleMovieClick = (id: number, mediaType: string) => {
+    router.push(`/movie-discover/${mediaType}/${id}`);
   };
 
   return (
@@ -76,10 +67,12 @@ function Navbar() {
       <div className={styles.inputsBox}>
         <SearchSelector
           query={query}
-          onSelect={(value: any) => console.log(value)}
+          onSelect={(id: number, mediaType: string) =>
+            handleMovieClick(id, mediaType)
+          }
           onChange={handleSearch}
           options={searchOptions}
-          onViewAllClick={() => handleMovieClick(query)}
+          onViewAllClick={() => handleViewAllClick(query)}
         />
         <Select
           options={options}

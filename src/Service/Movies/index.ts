@@ -70,7 +70,7 @@ export const TmdbApi: any = createApi({
         };
       },
     }),
-    getSearch: builder.query<any, { query: string }>({
+    getSearch: builder.query<any, { query: string}>({
       query: (query) => {
         return {
           url: `search/multi`,

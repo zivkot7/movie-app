@@ -3,7 +3,6 @@ import { SearchInputProps } from "movie-app/types/components";
 import styles from "./Search.module.css";
 import { IoSearch } from "react-icons/io5";
 import { useDebounce } from "movie-app/hooks/useDebounce";
-import { IoCloseCircleOutline } from "react-icons/io5";
 
 export const Search = ({
   placeholder = "Search movies or series...",
@@ -13,8 +12,7 @@ export const Search = ({
   debounce = 400,
 }: SearchInputProps) => {
   const [query, setQuery] = useState(value);
-
-  const debouncedValue = useDebounce(query, onChange, debounce);
+  useDebounce(query, onChange, debounce);
 
   const handleValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);

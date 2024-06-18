@@ -21,11 +21,7 @@ import { useRouter } from "next/navigation";
 
 const MovieDiscover = () => {
   const router = useRouter();
-  const { data: MovieGenres } = useGetGenresMoviesQuery();
-  const { data: TvShowsGenres } = useGetGenresTvQuery();
-  const { data: TopRatedMovies } = useGetTopRatedMoviesQuery();
-  const { data: PopularMovies } = useGetPopularMoviesQuery();
-  const { data: NowPlayingMovies } = useGetNowPlayingMoviesQuery();
+
   const [isMoviesActive, setIsMoviesActive] = useState(true);
   const [isSeriesActive, setIsSeriesActive] = useState(true);
   const [selectedGenresMovie, setSelectedGenresMovie] = useState<number[]>([]);
@@ -37,12 +33,18 @@ const MovieDiscover = () => {
     selectedGenresMovie.length > 0 ? selectedGenresMovie : "";
   const genreStringTv = selectedGenresTv.length > 0 ? selectedGenresTv : "";
 
-  const { data: AllMovies } = useGetMoviesQuery(
+  const { data: MovieGenres } = useGetGenresMoviesQuery();
+  const { data: TvShowsGenres } = useGetGenresTvQuery();
+  const { data: TopRatedMovies } = useGetTopRatedMoviesQuery();
+  const { data: PopularMovies } = useGetPopularMoviesQuery();
+  const { data: NowPlayingMovies } = useGetNowPlayingMoviesQuery();
+
+  const { data: AllMovies, isFetching: isFetchingMovies } = useGetMoviesQuery(
     { genres: genreStringMovie, page: currentPageMovies },
     { skip: isMoviesActive }
   );
 
-  const { data: AllTvShows } = useGetTvQuery(
+  const { data: AllTvShows, isFetching: isFetchingTvShows } = useGetTvQuery(
     { genres: genreStringTv, page: currentPageTv },
     { skip: isSeriesActive }
   );
@@ -51,18 +53,18 @@ const MovieDiscover = () => {
   const actionGenreId = useGenreIdByName("Action");
   const crimeGenreId = useGenreIdByName("Crime");
 
-  const {
-    data: HorrorMovies,
-    isLoading: horrorLoading,
-  } = useGetMoviesQuery({ genres: [horrorGenreId] }, { skip: !horrorGenreId });
-  const {
-    data: ActionMovies,
-    isLoading: actionLoading,
-  } = useGetMoviesQuery({ genres: [actionGenreId] }, { skip: !actionGenreId });
-  const {
-    data: CrimeMovies,
-    isLoading: crimeLoading,
-  } = useGetMoviesQuery({ genres: [crimeGenreId] }, { skip: !crimeGenreId });
+  const { data: HorrorMovies, isLoading: horrorLoading } = useGetMoviesQuery(
+    { genres: [horrorGenreId] },
+    { skip: !horrorGenreId }
+  );
+  const { data: ActionMovies, isLoading: actionLoading } = useGetMoviesQuery(
+    { genres: [actionGenreId] },
+    { skip: !actionGenreId }
+  );
+  const { data: CrimeMovies, isLoading: crimeLoading } = useGetMoviesQuery(
+    { genres: [crimeGenreId] },
+    { skip: !crimeGenreId }
+  );
 
   const optionsMovie: Option[] =
     MovieGenres?.genres.map((genre: Genre) => ({
@@ -98,33 +100,36 @@ const MovieDiscover = () => {
   const handleMoviesBtnClick = () => {
     setIsMoviesActive(false);
     setIsSeriesActive(true);
-    setSelectedGenresTv([]);
   };
 
   const handleSeriesBtnClick = () => {
     setIsSeriesActive(false);
     setIsMoviesActive(true);
-    setSelectedGenresMovie([]);
   };
 
   const handleHomeBtnClick = () => {
     setIsSeriesActive(true);
     setIsMoviesActive(true);
-    setSelectedGenresTv([]);
-    setSelectedGenresMovie([]);
   };
 
-  const handlePageChangeMovies = (newPage: number) => {
-    setCurrentPageMovies(newPage);
+  const handlePageChangeMovies = (page: number) => {
+    setCurrentPageMovies(page);
   };
 
-  const handlePageChangeTv = (newPage: number) => {
-    setCurrentPageTv(newPage);
+  const handlePageChangeTv = (page: number) => {
+    setCurrentPageTv(page);
   };
 
   const handleMovieClick = (id: number, type: string) => {
     router.push(`/movie-discover/${type}/${id}`);
   };
+
+  const isLoading =
+    isFetchingMovies &&
+    isFetchingTvShows &&
+    horrorLoading &&
+    actionLoading &&
+    crimeLoading;
 
   return (
     <div className={styles.container}>
@@ -150,70 +155,78 @@ const MovieDiscover = () => {
           />
         ) : null}
       </div>
-      {!isMoviesActive && (
-        <div className={styles.listBox}>
-          <MovieSection
-            type="movie"
-            onClick={handleMovieClick}
-            title="All movies:"
-            movies={AllMovies?.results || []}
-            isCompactLayout
-          />
-          <Pagination
-            currentPage={currentPageMovies}
-            totalPages={AllMovies?.total_pages || 1}
-            onPageChange={handlePageChangeMovies}
-          />
-        </div>
-      )}
-      {!isSeriesActive && (
-        <div className={styles.listBox}>
-          <MovieSection
-            type="tv"
-            onClick={handleMovieClick}
-            title="All series:"
-            movies={AllTvShows?.results || []}
-            isCompactLayout
-          />
-          <Pagination
-            currentPage={currentPageTv}
-            totalPages={AllTvShows?.total_pages || 1}
-            onPageChange={handlePageChangeTv}
-          />
-        </div>
-      )}
-      {isMoviesActive && isSeriesActive && (
+      {isLoading ? (
+        <div className={styles.loader}>Loading...</div>
+      ) : (
         <>
-          <MovieSection
-            onClick={handleMovieClick}
-            title="Now playing:"
-            movies={NowPlayingMovies?.results || []}
-          />
-          <MovieSection
-            onClick={handleMovieClick}
-            title="Top Rated:"
-            movies={TopRatedMovies?.results || []}
-          />
-          <MovieSection
-            onClick={handleMovieClick}
-            title="Popular:"
-            movies={PopularMovies?.results || []}
-          />
-          <MovieSection
-            title="Action:"
-            movies={ActionMovies?.results || []}
-            onClick={handleMovieClick}
-          />
-          <MovieSection
-            title="Crime:"
-            movies={CrimeMovies?.results || []}
-            onClick={handleMovieClick}
-          />
-          <MovieSection
-            title="Horror:"
-            movies={HorrorMovies?.results || []}
-            onClick={handleMovieClick}
-          />
+          {!isMoviesActive && (
+            <div className={`${styles.listBox} ${styles.fadeIn}`}>
+              <MovieSection
+                type="movie"
+                onClick={handleMovieClick}
+                title="All movies:"
+                movies={AllMovies?.results || []}
+                isCompactLayout
+              />
+              <Pagination
+                currentPage={currentPageMovies}
+                totalPages={AllMovies?.total_pages || 1}
+                onPageChange={handlePageChangeMovies}
+              />
+            </div>
+          )}
+          {!isSeriesActive && (
+            <div className={`${styles.listBox} ${styles.fadeIn}`}>
+              <MovieSection
+                type="tv"
+                onClick={handleMovieClick}
+                title="All series:"
+                movies={AllTvShows?.results || []}
+                isCompactLayout
+              />
+              <Pagination
+                currentPage={currentPageTv}
+                totalPages={AllTvShows?.total_pages || 1}
+                onPageChange={handlePageChangeTv}
+              />
+            </div>
+          )}
+          {isLoading && isMoviesActive && isSeriesActive ? (
+            <div className={styles.loader}>Loading...</div>
+          ) : (
+            <div className={styles.fadeIn}>
+              <MovieSection
+                onClick={handleMovieClick}
+                title="Now playing:"
+                movies={NowPlayingMovies?.results || []}
+              />
+              <MovieSection
+                onClick={handleMovieClick}
+                title="Top Rated:"
+                movies={TopRatedMovies?.results || []}
+              />
+              <MovieSection
+                onClick={handleMovieClick}
+                title="Popular:"
+                movies={PopularMovies?.results || []}
+              />
+              <MovieSection
+                title="Action:"
+                movies={ActionMovies?.results || []}
+                onClick={handleMovieClick}
+              />
+              <MovieSection
+                title="Crime:"
+                movies={CrimeMovies?.results || []}
+                onClick={handleMovieClick}
+              />
+              <MovieSection
+                title="Horror:"
+                movies={HorrorMovies?.results || []}
+                onClick={handleMovieClick}
+              />
+            </div>
+          )}
         </>
       )}
     </div>

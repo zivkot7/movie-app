@@ -40,6 +40,7 @@
 }
 
 .movie {
+  position: relative;
   margin-right: 5px;
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
@@ -55,4 +56,12 @@
 
 .title {
   color: rgb(84, 144, 211);
+}
+.starIcon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: gold;
+  font-size: 1.5rem;
+  z-index: 1;
 }

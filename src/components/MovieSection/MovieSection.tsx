@@ -1,6 +1,8 @@
 import React, { useRef } from "react";
 import Image from "next/image";
 import styles from "./MovieSection.module.css";
+import { FaRegStar, FaStar } from "react-icons/fa";
+import useStarClick from "movie-app/hooks/useStarClick";
 
 interface Movie {
   id: number;
@@ -25,6 +27,7 @@ export const MovieSection = ({
   isCompactLayout = false,
 }: MovieSectionProps) => {
   const movieListRef = useRef<HTMLDivElement>(null);
+  const { clicked, handleStarClick } = useStarClick();
 
   const scrollLeft = () => {
     if (movieListRef.current) {
@@ -66,6 +69,17 @@ export const MovieSection = ({
                     height={270}
                     style={{ borderRadius: 8 }}
                   />
+                  {clicked.has(movie.id) ? (
+                    <FaStar
+                      className={styles.starIcon}
+                      onClick={(event) => handleStarClick(event, movie.id)}
+                    />
+                  ) : (
+                    <FaRegStar
+                      className={styles.starIcon}
+                      onClick={(event) => handleStarClick(event, movie.id)}
+                    />
+                  )}
                 </div>
               ))
             : movies.slice(0, 10).map((movie: Movie) => (
@@ -81,6 +95,17 @@ export const MovieSection = ({
                     height={270}
                     style={{ borderRadius: 8 }}
                   />
+                  {clicked.has(movie.id) ? (
+                    <FaStar
+                      className={styles.starIcon}
+                      onClick={(event) => handleStarClick(event, movie.id)}
+                    />
+                  ) : (
+                    <FaRegStar
+                      className={styles.starIcon}
+                      onClick={(event) => handleStarClick(event, movie.id)}
+                    />
+                  )}
                 </div>
               ))}
         </div>

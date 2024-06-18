@@ -15,6 +15,7 @@
 
 .imageContainer {
   margin: 20px;
+  position: relative;
 }
 
 .movieDetails {
@@ -100,6 +101,24 @@
 }
 .statusSection {
   padding-top: 40px;
+}
+
+.loader {
+  color: #ffffff;
+  background-color: rgb(33, 44, 55);
+  font-size: 1.5rem;
+  text-align: center;
+  padding: 400px;
+  height: 50vw;
+  width: 100%;
+}
+.starIcon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: gold;
+  font-size: 1.5rem;
+  z-index: 1;
 }
 
 @media (max-width: 1024px) {

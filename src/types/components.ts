@@ -17,23 +17,24 @@ export interface ButtonProps {
   disabled?: boolean;
 }
 
-export interface Option {
-  value: number;
+export type Option<T> = {
+  value: T;
   label: string;
-}
+};
 
-export interface SelectProps {
-  options: Option[];
-  onChange: (value: number | number[]) => void;
-  value: number | number[];
-  placeholder?: string;
+export interface SelectProps<T> {
+  options: Option<T>[];
+  onChange: (value: T | T[]) => void;
+  value: T | T[];
+  placeholder: string;
+  withIcon?: boolean;
   multiSelect?: boolean;
 }
 
-export interface DropdownOptionsProps {
-  options: Option[];
-  value: number | number[];
-  handleSelectOption: (selectedValue: number) => void;
+export interface DropdownOptionsProps<T> {
+  options: Option<T>[];
+  value: T | T[];
+  handleSelectOption: (selectedValue: T) => void;
   multiSelect: boolean;
 }
 

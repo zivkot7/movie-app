@@ -7,7 +7,7 @@ import SearchSelector from "../SearchSelector";
 import { useGetSearchQuery } from "movie-app/Service/Movies";
 import { usePathname, useRouter } from "next/navigation";
 
-const options: Option[] = [
+const options: Option<number>[] = [
   { value: 1, label: "Option 1" },
   { value: 2, label: "Option 2" },
   { value: 3, label: "Option 3" },
@@ -74,11 +74,12 @@ function Navbar() {
           options={searchOptions}
           onViewAllClick={() => handleViewAllClick(query)}
         />
-        <Select
+        <Select<number>
           options={options}
           value={selectedValue}
           onChange={handleFavoritesChange}
           placeholder="Favorites"
+          withIcon
         />
       </div>
     </div>

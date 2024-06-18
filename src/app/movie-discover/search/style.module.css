@@ -11,6 +11,11 @@
   border-radius: 10px;
   cursor: pointer;
 }
+.sortBox {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
 .itemBox:hover {
   background-color: rgba(146, 146, 146, 0.1);
 }

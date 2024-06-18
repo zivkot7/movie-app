@@ -66,13 +66,13 @@ const MovieDiscover = () => {
     { skip: !crimeGenreId }
   );
 
-  const optionsMovie: Option[] =
+  const optionsMovie: Option<number>[] =
     MovieGenres?.genres.map((genre: Genre) => ({
       value: genre.id,
       label: genre.name,
     })) || [];
 
-  const optionsTvShow: Option[] =
+  const optionsTvShow: Option<number>[] =
     TvShowsGenres?.genres.map((genre: Genre) => ({
       value: genre.id,
       label: genre.name,
@@ -144,7 +144,7 @@ const MovieDiscover = () => {
           Series
         </Button>
         {!isMoviesActive || !isSeriesActive ? (
-          <Select
+          <Select<number>
             options={!isMoviesActive ? optionsMovie : optionsTvShow}
             value={!isMoviesActive ? selectedGenresMovie : selectedGenresTv}
             onChange={(value) =>
@@ -191,9 +191,8 @@ const MovieDiscover = () => {
               />
             </div>
           )}
-          {isLoading && isMoviesActive && isSeriesActive ? (
-            <div className={styles.loader}>Loading...</div>
-          ) : (
+          {isLoading && <div className={styles.loader}>Loading...</div>}
+          {isMoviesActive && isSeriesActive && (
             <div className={styles.fadeIn}>
               <MovieSection
                 onClick={handleMovieClick}

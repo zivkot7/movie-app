@@ -5,13 +5,14 @@ import { IoIosStar } from "react-icons/io";
 import { Button } from "movie-app/components/Button";
 import DropdownOptions from "../../DropdownOptions";
 
-const Select = ({
+const Select = <T,>({
   options,
   onChange,
   value,
   placeholder,
+  withIcon,
   multiSelect = false,
-}: SelectProps) => {
+}: SelectProps<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
 
@@ -19,7 +20,7 @@ const Select = ({
     setIsOpen(!isOpen);
   };
 
-  const handleSelectOption = (selectedValue: number) => {
+  const handleSelectOption = (selectedValue: T) => {
     if (!multiSelect) {
       onChange(selectedValue);
       setIsOpen(false);
@@ -59,7 +60,7 @@ const Select = ({
         {!multiSelect ? (
           <Button variant="secondary" style={{ width: 130 }}>
             <div className={styles.buttonContentMultiSelect}>
-              <IoIosStar color="white" />
+              {withIcon && <IoIosStar color="white" />}
               {placeholder}
               <span className={styles.arrow}>{isOpen ? "▲" : "▼"}</span>
             </div>
@@ -74,7 +75,7 @@ const Select = ({
         )}
       </div>
       {isOpen && (
-        <DropdownOptions
+        <DropdownOptions<T>
           options={options}
           value={value}
           handleSelectOption={handleSelectOption}

@@ -5,20 +5,27 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import styles from "./style.module.css";
 import { useGetSearchQuery } from "movie-app/Service/Movies";
-import { Button } from "movie-app/components/Button";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import useStarClick from "movie-app/hooks/useStarClick";
+import Select from "movie-app/components/Inputs/Select";
+import useSortedData from "movie-app/hooks/useSortedData";
+import { Option } from "movie-app/types/components";
+import { Button } from "movie-app/components/Button";
 
 export const Search = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortOption, setSortOption] = useState<string>("");
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("q");
   const { clicked, handleStarClick } = useStarClick();
-  const [currentPage, setCurrentPage] = useState(1);
 
   const cachedData = useSelector(
     (state) => state.tmdbApi.queries[`getSearch("${query}")`]
   );
+
+  const sortedData = useSortedData(cachedData, sortOption);
 
   const {
     data: searchData,
@@ -33,11 +40,35 @@ export const Search = () => {
     router.push(`/movie-discover/${mediaType}/${id}`);
   };
 
+  const options: Option<string>[] = [
+    { value: "movie", label: "Movie" },
+    { value: "tv", label: "TV" },
+    { value: "year-asc", label: "Year Asc" },
+    { value: "year-desc", label: "Year Desc" },
+  ];
+
+  const handleSortChange = (value: string | string[]) => {
+    if (typeof value === "string") {
+      setSortOption(value);
+    }
+  };
+
   return (
     <div className={styles.container}>
       {cachedData && cachedData.status === "fulfilled" ? (
         <div>
-          {cachedData.data.results
+          <div className={styles.sortBox}>
+            <Select<string>
+              options={options}
+              onChange={handleSortChange}
+              value={sortOption}
+              placeholder="Sort by"
+            />
+            <Button variant="secondary" onClick={() => setSortOption("")}>
+              X Reset
+            </Button>
+          </div>
+          {sortedData
             .filter((item: any) => item.media_type !== "person")
             .map((result: any) => (
               <div
@@ -74,12 +105,10 @@ export const Search = () => {
                       ({result.release_date || result.first_air_date})
                     </p>
                   </div>
+                  <p>{result.media_type}</p>
                   <p className={styles.vote}>
                     Vote: {result.vote_average?.toFixed(1)}
                   </p>
-                  <Button variant="secondary" style={{ width: 130 }}>
-                    Add to favorite
-                  </Button>
                 </div>
               </div>
             ))}

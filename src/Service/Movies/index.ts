@@ -70,13 +70,10 @@ export const TmdbApi: any = createApi({
         };
       },
     }),
-    getSearch: builder.query<any, { query: string}>({
-      query: (query) => {
+    getSearch: builder.query<any, { query: string; page?: number }>({
+      query: ({ query, page = 1 }) => {
         return {
-          url: `search/multi`,
-          params: {
-            query,
-          },
+          url: `search/multi?query=${query}&language=en-US&page=${page}`,
         };
       },
     }),

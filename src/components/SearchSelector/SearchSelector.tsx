@@ -40,6 +40,16 @@ const SearchSelector = ({
     }
   };
 
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      onChange(value);
+    },
+    [onChange]
+  );
+  const handleFocus = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -47,21 +57,13 @@ const SearchSelector = ({
     };
   }, []);
 
-  const handleSearchChange = useCallback(
-    (value: string) => {
-      onChange(value);
-      if (value.trim() !== "") {
-        setIsOpen(true);
-      } else {
-        setIsOpen(false);
-      }
-    },
-    [onChange]
-  );
-
   return (
     <div className={styles.div} ref={containerRef}>
-      <Search value={query} onChange={handleSearchChange} />
+      <Search
+        value={query}
+        onFocus={handleFocus}
+        onChange={handleSearchChange}
+      />
       {isOpen && (
         <div className={styles.searchSelectorContainer}>
           <p className={styles.resultsText}>Searched results:</p>

@@ -1,6 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
+import React from "react";
 import styles from "movie-app/app/movie-discover/style.module.css";
 import {
   useGetGenresMoviesQuery,
@@ -18,16 +17,31 @@ import useGenreIdByName from "movie-app/hooks/useGenreIdByName";
 import { Button } from "movie-app/components/Button";
 import Pagination from "movie-app/components/Pagination";
 import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setCurrentPageMovies,
+  setCurrentPageTv,
+  setMovieType,
+  setSelectedGenresMovie,
+  setSelectedGenresTv,
+} from "../lib/movieFilter";
 
 const MovieDiscover = () => {
   const router = useRouter();
-
-  const [isMoviesActive, setIsMoviesActive] = useState(true);
-  const [isSeriesActive, setIsSeriesActive] = useState(true);
-  const [selectedGenresMovie, setSelectedGenresMovie] = useState<number[]>([]);
-  const [selectedGenresTv, setSelectedGenresTv] = useState<number[]>([]);
-  const [currentPageMovies, setCurrentPageMovies] = useState(1);
-  const [currentPageTv, setCurrentPageTv] = useState(1);
+  const dispatch = useDispatch();
+  const {
+    movieTypes,
+    selectedGenresMovie,
+    selectedGenresTv,
+    currentPageMovies,
+    currentPageTv,
+  } = useSelector((state: any) => ({
+    movieTypes: state.movieFilter.movieType,
+    selectedGenresMovie: state.selectedGenresMovie,
+    selectedGenresTv: state.selectedGenresTv,
+    currentPageMovies: state.currentPageMovies,
+    currentPageTv: state.currentPageTv,
+  }));
 
   const genreStringMovie =
     selectedGenresMovie.length > 0 ? selectedGenresMovie : "";
@@ -38,15 +52,17 @@ const MovieDiscover = () => {
   const { data: TopRatedMovies } = useGetTopRatedMoviesQuery();
   const { data: PopularMovies } = useGetPopularMoviesQuery();
   const { data: NowPlayingMovies } = useGetNowPlayingMoviesQuery();
+  const isMovie = movieTypes.includes("movie");
+  const isSerie = movieTypes.includes("tv");
 
   const { data: AllMovies, isFetching: isFetchingMovies } = useGetMoviesQuery(
     { genres: genreStringMovie, page: currentPageMovies },
-    { skip: isMoviesActive }
+    { skip: !isMovie }
   );
 
   const { data: AllTvShows, isFetching: isFetchingTvShows } = useGetTvQuery(
     { genres: genreStringTv, page: currentPageTv },
-    { skip: isSeriesActive }
+    { skip: !isSerie }
   );
 
   const horrorGenreId = useGenreIdByName("Horror");
@@ -84,40 +100,41 @@ const MovieDiscover = () => {
   ) => {
     if (type === "movies") {
       if (typeof value === "number") {
-        setSelectedGenresMovie([value]);
+        dispatch(setSelectedGenresMovie([value]));
       } else {
-        setSelectedGenresMovie(value);
+        dispatch(setSelectedGenresMovie(value));
       }
     } else if (type === "tvShows") {
       if (typeof value === "number") {
-        setSelectedGenresTv([value]);
+        dispatch(setSelectedGenresTv([value]));
       } else {
-        setSelectedGenresTv(value);
+        dispatch(setSelectedGenresTv(value));
       }
     }
   };
 
-  const handleMoviesBtnClick = () => {
-    setIsMoviesActive(false);
-    setIsSeriesActive(true);
-  };
-
-  const handleSeriesBtnClick = () => {
-    setIsSeriesActive(false);
-    setIsMoviesActive(true);
-  };
-
-  const handleHomeBtnClick = () => {
-    setIsSeriesActive(true);
-    setIsMoviesActive(true);
+  const handleHeaderButtonClick = (type: string) => {
+    switch (type) {
+      case "home":
+        dispatch(setMovieType({}));
+        break;
+      case "movies":
+        dispatch(setMovieType({ type: "MOVIE" }));
+        break;
+      case "tv":
+        dispatch(setMovieType({ type: "TV" }));
+        break;
+      default:
+        break;
+    }
   };
 
   const handlePageChangeMovies = (page: number) => {
-    setCurrentPageMovies(page);
+    dispatch(setCurrentPageMovies(page));
   };
 
   const handlePageChangeTv = (page: number) => {
-    setCurrentPageTv(page);
+    dispatch(setCurrentPageTv(page));
   };
 
   const handleMovieClick = (id: number, type: string) => {
@@ -133,24 +150,27 @@ const MovieDiscover = () => {
 
   return (
     <div className={styles.container}>
-      <Button onClick={handleHomeBtnClick} variant="clear">
+      <Button onClick={() => handleHeaderButtonClick("home")} variant="clear">
         Home
       </Button>
       <div className={styles.moviesGenres}>
-        <Button onClick={handleMoviesBtnClick} variant="clear">
+        <Button
+          onClick={() => handleHeaderButtonClick("movies")}
+          variant="clear"
+        >
           Movies
         </Button>
-        <Button onClick={handleSeriesBtnClick} variant="clear">
+        <Button onClick={() => handleHeaderButtonClick("tv")} variant="clear">
           Series
         </Button>
-        {!isMoviesActive || !isSeriesActive ? (
+        {isMovie || isSerie ? (
           <Select<number>
-            options={!isMoviesActive ? optionsMovie : optionsTvShow}
-            value={!isMoviesActive ? selectedGenresMovie : selectedGenresTv}
+            options={isMovie ? optionsMovie : optionsTvShow}
+            value={isMovie ? selectedGenresMovie : selectedGenresTv}
             onChange={(value) =>
-              handleGenreChange(value, !isMoviesActive ? "movies" : "tvShows")
+              handleGenreChange(value, isMovie ? "movies" : "tvShows")
             }
-            placeholder={!isMoviesActive ? "Movies" : "Tv Shows"}
+            placeholder={isMovie ? "Movies" : "Tv Shows"}
             multiSelect
           />
         ) : null}
@@ -159,7 +179,7 @@ const MovieDiscover = () => {
         <div className={styles.loader}>Loading...</div>
       ) : (
         <>
-          {!isMoviesActive && (
+          {isMovie && (
             <div className={`${styles.listBox} ${styles.fadeIn}`}>
               <MovieSection
                 type="movie"
@@ -175,7 +195,7 @@ const MovieDiscover = () => {
               />
             </div>
           )}
-          {!isSeriesActive && (
+          {isSerie && (
             <div className={`${styles.listBox} ${styles.fadeIn}`}>
               <MovieSection
                 type="tv"
@@ -191,8 +211,7 @@ const MovieDiscover = () => {
               />
             </div>
           )}
-          {isLoading && <div className={styles.loader}>Loading...</div>}
-          {isMoviesActive && isSeriesActive && (
+          {!isSerie && !isMovie && (
             <div className={styles.fadeIn}>
               <MovieSection
                 onClick={handleMovieClick}

@@ -1,7 +1,7 @@
+"use client";
 import React from "react";
 import styles from "./Button.module.css";
 import { ButtonProps } from "movie-app/types/components";
-
 export const Button = ({
   variant,
   onClick,

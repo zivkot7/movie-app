@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import styles from "./style.module.css";
 import { useGetSearchQuery } from "movie-app/Service/Movies";
@@ -11,6 +11,7 @@ import Select from "movie-app/components/Inputs/Select";
 import useSortedData from "movie-app/hooks/useSortedData";
 import { Option } from "movie-app/types/components";
 import { Button } from "movie-app/components/Button";
+import Pagination from "movie-app/components/Pagination";
 
 export const Search = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,19 +23,19 @@ export const Search = () => {
   const { clicked, handleStarClick } = useStarClick();
 
   const cachedData = useSelector(
-    (state) => state.tmdbApi.queries[`getSearch("${query}")`]
+    (state) =>
+      state.tmdbApi.queries[
+        `getSearch({"page":${currentPage},"query":"${query}"})`
+      ]
   );
-
-  const sortedData = useSortedData(cachedData, sortOption);
 
   const {
     data: searchData,
     error,
     isLoading,
-  } = useGetSearchQuery(query, {
-    skip: !!cachedData,
-    page: currentPage,
-  });
+  } = useGetSearchQuery({ query, page: currentPage }, { skip: !!cachedData });
+
+  const sortedData = useSortedData(cachedData, sortOption);
 
   const handleMovieClick = (id: number, mediaType: string) => {
     router.push(`/movie-discover/${mediaType}/${id}`);
@@ -52,6 +53,14 @@ export const Search = () => {
       setSortOption(value);
     }
   };
+
+  const handlePageChangeTv = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // useEffect(() => {
+  //   setSortOption("");
+  // }, [query, currentPage]);
 
   return (
     <div className={styles.container}>
@@ -112,6 +121,13 @@ export const Search = () => {
                 </div>
               </div>
             ))}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={
+              cachedData?.data?.total_pages || searchData?.total_pages || 1
+            }
+            onPageChange={handlePageChangeTv}
+          />
         </div>
       ) : (
         <div className={styles.loader}>Loading...</div>

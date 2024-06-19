@@ -64,7 +64,7 @@ export const MovieSection = ({
                 >
                   <Image
                     src={`https://image.tmdb.org/t/p/w500${movie?.poster_path}`}
-                    alt={movie?.title}
+                    alt={"Movie poster"}
                     width={200}
                     height={270}
                     style={{ borderRadius: 8 }}
@@ -90,7 +90,7 @@ export const MovieSection = ({
                 >
                   <Image
                     src={`https://image.tmdb.org/t/p/w500${movie?.poster_path}`}
-                    alt={movie?.title}
+                    alt={"Movie poster"}
                     width={200}
                     height={270}
                     style={{ borderRadius: 8 }}

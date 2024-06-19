@@ -19,7 +19,7 @@ function Navbar() {
   const [selectedValue, setSelectedValue] = useState<number | null>(null);
   const pathname = usePathname();
 
-  const { data } = useGetSearchQuery(query);
+  const { data } = useGetSearchQuery({ query });
 
   const handleSearch = (value: string) => {
     setQuery(value);

@@ -1,7 +1,15 @@
 "use client";
-import React from "react";
+import React, { CSSProperties } from "react";
 import styles from "./Button.module.css";
-import { ButtonProps } from "movie-app/types/components";
+
+export interface ButtonProps {
+  variant: "primary" | "secondary" | "clear";
+  onClick?: () => void;
+  children: React.ReactNode;
+  style?: CSSProperties;
+  disabled?: boolean;
+}
+
 export const Button = ({
   variant,
   onClick,

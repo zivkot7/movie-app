@@ -4,36 +4,32 @@ import styles from "./Navbar.module.css";
 import Select from "../Inputs/Select/Select";
 import { Option } from "movie-app/types/components";
 import SearchSelector from "../SearchSelector";
-import { useGetSearchQuery } from "movie-app/Service/Movies";
 import { usePathname, useRouter } from "next/navigation";
-
-const options: Option<number>[] = [
-  { value: 1, label: "Option 1" },
-  { value: 2, label: "Option 2" },
-  { value: 3, label: "Option 3" },
-];
+import { useGetSearchQuery } from "movie-app/Service/Movies";
+import { useSelector } from "react-redux";
+import FavoriteOption from "../FavoriteOption";
 
 function Navbar() {
-  const router = useRouter();
   const [query, setQuery] = useState("");
-  const [selectedValue, setSelectedValue] = useState<number | null>(null);
+
   const pathname = usePathname();
+  const router = useRouter();
+
+  const { favorites } = useSelector((state: RootState) => ({
+    favorites: state.movieFilter.favorites,
+  }));
 
   const { data } = useGetSearchQuery({ query });
 
-  const handleSearch = (value: string) => {
+  const handleSearch = React.useCallback((value: string) => {
     setQuery(value);
-  };
-
-  const handleFavoritesChange = (value: number) => {
-    setSelectedValue(value);
-  };
+  }, []);
 
   const searchOptions = React.useMemo(() => {
     if (query && data) {
       return data.results
-        .filter((item: any) => item.media_type !== "person")
-        .map((item: any) => ({
+        .filter((item: Movie) => item.media_type !== "person")
+        .map((item: Movie) => ({
           ...item,
         }));
     }
@@ -59,6 +55,28 @@ function Navbar() {
     router.push(`/movie-discover/${mediaType}/${id}`);
   };
 
+  const handleFavoritesChange = (selectedValue: number | number[]) => {
+    const favId = Array.isArray(selectedValue)
+      ? selectedValue[0]
+      : selectedValue;
+    const fav = favorites.find((fav: Favorite) => fav.id === favId);
+    console.log(fav);
+    if (fav) {
+      if (fav.type) {
+        router.push(`/movie-discover/${fav.type}/${fav.id}`);
+      } else if (fav.media_type) {
+        router.push(`/movie-discover/${fav.media_type}/${fav.id}`);
+      }
+    }
+  };
+
+  const options: Option<number>[] = favorites.map((fav: Favorite) => ({
+    value: fav?.id,
+    label: fav?.title || fav?.original_name || "",
+  }));
+
+  const selectedValue: number | number[] = [];
+
   return (
     <div className={containerStyle}>
       <h2 className={styles.title} onClick={handleHomeClick}>
@@ -75,11 +93,12 @@ function Navbar() {
           onViewAllClick={() => handleViewAllClick(query)}
         />
         <Select<number>
-          options={options}
           value={selectedValue}
+          options={options}
           onChange={handleFavoritesChange}
           placeholder="Favorites"
           withIcon
+          customRow={FavoriteOption}
         />
       </div>
     </div>

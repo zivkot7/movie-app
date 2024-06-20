@@ -1,6 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
-export const useDebounce = (value: any, callback: any, delay = 500) => {
+export const useDebounce = <T>(
+  value: T,
+  callback: (value: T) => void,
+  delay = 500
+) => {
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {

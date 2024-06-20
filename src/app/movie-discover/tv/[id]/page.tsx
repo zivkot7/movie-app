@@ -1,9 +1,9 @@
 "use client";
-import { useGetSingleTvQuery } from "movie-app/Service/Movies";
 import { useParams } from "next/navigation";
 import styles from "./style.module.css";
 import Image from "next/image";
 import MovieCard from "movie-app/components/MovieCard";
+import { useGetSingleTvQuery } from "movie-app/Service/Movies";
 
 const MovieDetails = () => {
   const { id } = useParams();

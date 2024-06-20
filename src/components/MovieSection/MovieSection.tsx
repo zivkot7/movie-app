@@ -2,7 +2,8 @@ import React, { useRef } from "react";
 import Image from "next/image";
 import styles from "./MovieSection.module.css";
 import { FaRegStar, FaStar } from "react-icons/fa";
-import useStarClick from "movie-app/hooks/useStarClick";
+import { useDispatch, useSelector } from "react-redux";
+import { setFavorites } from "movie-app/app/lib/movieFilter";
 
 interface Movie {
   id: number;
@@ -27,7 +28,10 @@ export const MovieSection = ({
   isCompactLayout = false,
 }: MovieSectionProps) => {
   const movieListRef = useRef<HTMLDivElement>(null);
-  const { clicked, handleStarClick } = useStarClick();
+  const dispatch = useDispatch();
+  const favorites = useSelector(
+    (state: RootState) => state.movieFilter.favorites
+  );
 
   const scrollLeft = () => {
     if (movieListRef.current) {
@@ -44,6 +48,14 @@ export const MovieSection = ({
   const movieList = isCompactLayout
     ? styles.movieListCompact
     : styles.movieList;
+
+  const onFavoriteClick = (
+    event: React.MouseEvent<SVGElement, MouseEvent>,
+    movie: Movie
+  ) => {
+    event?.stopPropagation();
+    dispatch(setFavorites({ ...movie, type }));
+  };
 
   return (
     <div className={styles.container}>
@@ -69,15 +81,15 @@ export const MovieSection = ({
                     height={270}
                     style={{ borderRadius: 8 }}
                   />
-                  {clicked.has(movie.id) ? (
+                  {favorites.some((fav: Favorite) => fav.id === movie.id) ? (
                     <FaStar
                       className={styles.starIcon}
-                      onClick={(event) => handleStarClick(event, movie.id)}
+                      onClick={(event) => onFavoriteClick(event, movie)}
                     />
                   ) : (
                     <FaRegStar
                       className={styles.starIcon}
-                      onClick={(event) => handleStarClick(event, movie.id)}
+                      onClick={(event) => onFavoriteClick(event, movie)}
                     />
                   )}
                 </div>
@@ -95,15 +107,15 @@ export const MovieSection = ({
                     height={270}
                     style={{ borderRadius: 8 }}
                   />
-                  {clicked.has(movie.id) ? (
+                  {favorites.some((fav: Favorite) => fav.id === movie.id) ? (
                     <FaStar
                       className={styles.starIcon}
-                      onClick={(event) => handleStarClick(event, movie.id)}
+                      onClick={(event) => onFavoriteClick(event, movie)}
                     />
                   ) : (
                     <FaRegStar
                       className={styles.starIcon}
-                      onClick={(event) => handleStarClick(event, movie.id)}
+                      onClick={(event) => onFavoriteClick(event, movie)}
                     />
                   )}
                 </div>

@@ -4,10 +4,11 @@ import styles from "./SearchSelector.module.css";
 import Image from "next/image";
 
 export type SearchSelectorProps = {
+  results?: string[];
   onSelect: (id: number, mediaType: string) => void;
-  options: any;
+  options: SearchResult[];
   query: string;
-  onChange: any;
+  onChange: (value: string) => void;
   onViewAllClick: () => void;
 };
 
@@ -21,7 +22,7 @@ const SearchSelector = ({
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleSelect = (item: any) => {
+  const handleSelect = (item: SearchResult) => {
     onSelect(item.id, item.media_type);
     setIsOpen(false);
   };
@@ -70,7 +71,7 @@ const SearchSelector = ({
           {options.length > 0 ? null : (
             <p className={styles.noResults}>No results found</p>
           )}
-          {options.slice(0, 5).map((item: any) => (
+          {options.slice(0, 5).map((item: SearchResult) => (
             <div
               key={item.id}
               onClick={() => handleSelect(item)}

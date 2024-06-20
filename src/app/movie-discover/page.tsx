@@ -1,15 +1,7 @@
 "use client";
 import React from "react";
 import styles from "movie-app/app/movie-discover/style.module.css";
-import {
-  useGetGenresMoviesQuery,
-  useGetGenresTvQuery,
-  useGetMoviesQuery,
-  useGetNowPlayingMoviesQuery,
-  useGetPopularMoviesQuery,
-  useGetTopRatedMoviesQuery,
-  useGetTvQuery,
-} from "movie-app/Service/Movies";
+
 import MovieSection from "movie-app/components/MovieSection";
 import Select from "movie-app/components/Inputs/Select";
 import { Option } from "movie-app/types/components";
@@ -25,6 +17,15 @@ import {
   setSelectedGenresMovie,
   setSelectedGenresTv,
 } from "../lib/movieFilter";
+import {
+  useGetGenresMoviesQuery,
+  useGetGenresTvQuery,
+  useGetMoviesQuery,
+  useGetNowPlayingMoviesQuery,
+  useGetPopularMoviesQuery,
+  useGetTopRatedMoviesQuery,
+  useGetTvQuery,
+} from "movie-app/Service/Movies";
 
 const MovieDiscover = () => {
   const router = useRouter();
@@ -37,10 +38,10 @@ const MovieDiscover = () => {
     currentPageTv,
   } = useSelector((state: any) => ({
     movieTypes: state.movieFilter.movieType,
-    selectedGenresMovie: state.selectedGenresMovie,
-    selectedGenresTv: state.selectedGenresTv,
-    currentPageMovies: state.currentPageMovies,
-    currentPageTv: state.currentPageTv,
+    selectedGenresMovie: state.movieFilter.selectedGenresMovie,
+    selectedGenresTv: state.movieFilter.selectedGenresTv,
+    currentPageMovies: state.movieFilter.currentPageMovies,
+    currentPageTv: state.movieFilter.currentPageTv,
   }));
 
   const genreStringMovie =
@@ -99,16 +100,16 @@ const MovieDiscover = () => {
     type: "movies" | "tvShows"
   ) => {
     if (type === "movies") {
-      if (typeof value === "number") {
-        dispatch(setSelectedGenresMovie([value]));
-      } else {
+      if (Array.isArray(value)) {
         dispatch(setSelectedGenresMovie(value));
+      } else {
+        dispatch(setSelectedGenresMovie([value]));
       }
     } else if (type === "tvShows") {
-      if (typeof value === "number") {
-        dispatch(setSelectedGenresTv([value]));
-      } else {
+      if (Array.isArray(value)) {
         dispatch(setSelectedGenresTv(value));
+      } else {
+        dispatch(setSelectedGenresTv([value]));
       }
     }
   };
@@ -142,11 +143,15 @@ const MovieDiscover = () => {
   };
 
   const isLoading =
-    isFetchingMovies &&
-    isFetchingTvShows &&
-    horrorLoading &&
-    actionLoading &&
+    isFetchingMovies ||
+    isFetchingTvShows ||
+    horrorLoading ||
+    actionLoading ||
     crimeLoading;
+
+  if (isLoading) {
+    return <div className={styles.loader}>Loading...</div>;
+  }
 
   return (
     <div className={styles.container}>
@@ -175,77 +180,72 @@ const MovieDiscover = () => {
           />
         ) : null}
       </div>
-      {isLoading ? (
-        <div className={styles.loader}>Loading...</div>
-      ) : (
-        <>
-          {isMovie && (
-            <div className={`${styles.listBox} ${styles.fadeIn}`}>
-              <MovieSection
-                type="movie"
-                onClick={handleMovieClick}
-                title="All movies:"
-                movies={AllMovies?.results || []}
-                isCompactLayout
-              />
-              <Pagination
-                currentPage={currentPageMovies}
-                totalPages={AllMovies?.total_pages || 1}
-                onPageChange={handlePageChangeMovies}
-              />
-            </div>
-          )}
-          {isSerie && (
-            <div className={`${styles.listBox} ${styles.fadeIn}`}>
-              <MovieSection
-                type="tv"
-                onClick={handleMovieClick}
-                title="All series:"
-                movies={AllTvShows?.results || []}
-                isCompactLayout
-              />
-              <Pagination
-                currentPage={currentPageTv}
-                totalPages={AllTvShows?.total_pages || 1}
-                onPageChange={handlePageChangeTv}
-              />
-            </div>
-          )}
-          {!isSerie && !isMovie && (
-            <div className={styles.fadeIn}>
-              <MovieSection
-                onClick={handleMovieClick}
-                title="Now playing:"
-                movies={NowPlayingMovies?.results || []}
-              />
-              <MovieSection
-                onClick={handleMovieClick}
-                title="Top Rated:"
-                movies={TopRatedMovies?.results || []}
-              />
-              <MovieSection
-                onClick={handleMovieClick}
-                title="Popular:"
-                movies={PopularMovies?.results || []}
-              />
-              <MovieSection
-                title="Action:"
-                movies={ActionMovies?.results || []}
-                onClick={handleMovieClick}
-              />
-              <MovieSection
-                title="Crime:"
-                movies={CrimeMovies?.results || []}
-                onClick={handleMovieClick}
-              />
-              <MovieSection
-                title="Horror:"
-                movies={HorrorMovies?.results || []}
-                onClick={handleMovieClick}
-              />
-            </div>
-          )}
-        </>
+
+      {isMovie && (
+        <div className={`${styles.listBox} ${styles.fadeIn}`}>
+          <MovieSection
+            type="movie"
+            onClick={handleMovieClick}
+            title="All movies:"
+            movies={AllMovies?.results || []}
+            isCompactLayout
+          />
+          <Pagination
+            currentPage={currentPageMovies}
+            totalPages={AllMovies?.total_pages || 1}
+            onPageChange={handlePageChangeMovies}
+          />
+        </div>
+      )}
+      {isSerie && (
+        <div className={`${styles.listBox} ${styles.fadeIn}`}>
+          <MovieSection
+            type="tv"
+            onClick={handleMovieClick}
+            title="All series:"
+            movies={AllTvShows?.results || []}
+            isCompactLayout
+          />
+          <Pagination
+            currentPage={currentPageTv}
+            totalPages={AllTvShows?.total_pages || 1}
+            onPageChange={handlePageChangeTv}
+          />
+        </div>
+      )}
+      {!isSerie && !isMovie && (
+        <div className={styles.fadeIn}>
+          <MovieSection
+            onClick={handleMovieClick}
+            title="Now playing:"
+            movies={NowPlayingMovies?.results || []}
+          />
+          <MovieSection
+            onClick={handleMovieClick}
+            title="Top Rated:"
+            movies={TopRatedMovies?.results || []}
+          />
+          <MovieSection
+            onClick={handleMovieClick}
+            title="Popular:"
+            movies={PopularMovies?.results || []}
+          />
+          <MovieSection
+            title="Action:"
+            movies={ActionMovies?.results || []}
+            onClick={handleMovieClick}
+          />
+          <MovieSection
+            title="Crime:"
+            movies={CrimeMovies?.results || []}
+            onClick={handleMovieClick}
+          />
+          <MovieSection
+            title="Horror:"
+            movies={HorrorMovies?.results || []}
+            onClick={handleMovieClick}
+          />
+        </div>
       )}
     </div>
   );

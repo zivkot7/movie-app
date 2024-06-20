@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 
 const initialState = {
   movieType: ["film", "tv"],
@@ -6,6 +6,7 @@ const initialState = {
   selectedGenresTv: [],
   currentPageMovies: 1,
   currentPageTv: 1,
+  favorites: JSON.parse(localStorage.getItem("favorites") as string) ?? [],
 };
 
 export const movieFilterSlice = createSlice({
@@ -38,6 +39,21 @@ export const movieFilterSlice = createSlice({
     setCurrentPageTv: (state, { payload }) => {
       state.currentPageTv = payload;
     },
+    setFavorites: (state, { payload }) => {
+      const exists = state.favorites.some(
+        (movie: any) => movie.id === payload.id
+      );
+
+      if (exists) {
+        state.favorites = state.favorites.filter(
+          (movie: any) => movie.id !== payload.id
+        );
+      } else {
+        state.favorites.push(payload);
+      }
+
+      localStorage.setItem("favorites", JSON.stringify(state.favorites));
+    },
   },
 });
 
@@ -47,5 +63,6 @@ export const {
   setSelectedGenresTv,
   setCurrentPageMovies,
   setCurrentPageTv,
+  setFavorites,
 } = movieFilterSlice.actions;
 export default movieFilterSlice.reducer;

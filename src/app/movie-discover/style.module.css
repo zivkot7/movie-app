@@ -39,9 +39,11 @@
 .loader {
   color: #ffffff;
   font-size: 1.5rem;
-  text-align: center;
-  padding: 200px;
-  height: 60vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 45vw;
+  background-color: rgb(33, 44, 55);
 }
 
 .fadeIn {
@@ -54,5 +56,11 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (max-width: 425px) {
+  .container {
+    padding: 200px 0px;
   }
 }

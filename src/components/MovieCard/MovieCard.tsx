@@ -1,8 +1,9 @@
 import React, { useMemo } from "react";
 import Image from "next/image";
 import styles from "./MovieCard.module.css";
-import useStarClick from "movie-app/hooks/useStarClick";
 import { FaRegStar, FaStar } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { setFavorites } from "movie-app/app/lib/movieFilter";
 
 interface MovieCardProps {
   type: "movie" | "tv";
@@ -37,7 +38,10 @@ interface MovieCardProps {
 }
 
 const MovieCard = ({ movie, type }: MovieCardProps) => {
-  const { clicked, handleStarClick } = useStarClick();
+  const dispatch = useDispatch();
+  const favorites = useSelector(
+    (state: RootState) => state.movieFilter.favorites
+  );
 
   const movieDetails = {
     displayTitle: type === "movie" ? movie?.title : movie?.name,
@@ -56,6 +60,14 @@ const MovieCard = ({ movie, type }: MovieCardProps) => {
     displaySeasons: movie?.number_of_seasons,
   };
 
+  const onFavoriteClick = (
+    event: React.MouseEvent<SVGElement, MouseEvent>,
+    movie: any
+  ) => {
+    event?.stopPropagation();
+    dispatch(setFavorites(movie));
+  };
+
   return (
     <>
       {movie ? (
@@ -70,15 +82,15 @@ const MovieCard = ({ movie, type }: MovieCardProps) => {
                 height={350}
                 layout="responsive"
               />
-              {clicked.has(movie.id) ? (
+              {favorites.some((fav: Favorite) => fav.id === movie.id) ? (
                 <FaStar
                   className={styles.starIcon}
-                  onClick={(event) => handleStarClick(event, movie.id)}
+                  onClick={(event) => onFavoriteClick(event, movie)}
                 />
               ) : (
                 <FaRegStar
                   className={styles.starIcon}
-                  onClick={(event) => handleStarClick(event, movie.id)}
+                  onClick={(event) => onFavoriteClick(event, movie)}
                 />
               )}
             </div>

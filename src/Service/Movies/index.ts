@@ -1,35 +1,34 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { TMDB_API_BASE_URL } from "../axois";
+
+const BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
+const BEARER_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_READ_ACCESS_TOKEN;
 
 export const TmdbApi: any = createApi({
   reducerPath: "tmdbApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${TMDB_API_BASE_URL}/3/`,
+    baseUrl: BASE_URL,
     prepareHeaders: (header) => {
-      header.set(
-        "Authorization",
-        `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiOTVjMmVhNTM3MDViYWJjYzlmNjEyMWVmOGYyNDhhZCIsInN1YiI6IjY2NjVhYzdlMjEyNDA4ZjYxZjUzMWQ3MCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.2vdFfulYyDdGjauBpqnH7fVtH6T2sZ3fuE-3wldOrFA`
-      );
+      header.set("Authorization", `Bearer ${BEARER_TOKEN}`);
       return header;
     },
   }),
   endpoints: (builder) => ({
-    getPopularMovies: builder.query<any, void>({
+    getPopularMovies: builder.query<Movie[], void>({
       query: () => "movie/popular",
     }),
-    getNowPlayingMovies: builder.query<any, void>({
+    getNowPlayingMovies: builder.query<Movie[], void>({
       query: () => "movie/now_playing",
     }),
-    getTopRatedMovies: builder.query<any, void>({
+    getTopRatedMovies: builder.query<Movie[], void>({
       query: () => "movie/top_rated",
     }),
-    getGenresMovies: builder.query<any, void>({
+    getGenresMovies: builder.query<Genre[], void>({
       query: () => "genre/movie/list",
     }),
-    getGenresTv: builder.query<any, void>({
+    getGenresTv: builder.query<Genre[], void>({
       query: () => "genre/tv/list",
     }),
-    getMovies: builder.query<any, { genres: number[]; page?: number }>({
+    getMovies: builder.query<Movie[], { genres: number[]; page?: number }>({
       query: ({ genres, page = 1 }) => {
         let params: any = { page };
 
@@ -42,7 +41,7 @@ export const TmdbApi: any = createApi({
         };
       },
     }),
-    getTv: builder.query<any, { genres: number[]; page?: number }>({
+    getTv: builder.query<Movie[], { genres: number[]; page?: number }>({
       query: ({ genres, page = 1 }) => {
         let params: any = { page };
 
@@ -56,21 +55,21 @@ export const TmdbApi: any = createApi({
         };
       },
     }),
-    getSingleMovie: builder.query<any, { id: string }>({
+    getSingleMovie: builder.query<Movie, { id: string }>({
       query: (id) => {
         return {
           url: `movie/${id}`,
         };
       },
     }),
-    getSingleTv: builder.query<any, { id: number }>({
+    getSingleTv: builder.query<Movie, { id: number }>({
       query: (id) => {
         return {
           url: `tv/${id}`,
         };
       },
     }),
-    getSearch: builder.query<any, { query: string; page?: number }>({
+    getSearch: builder.query<SearchResult, { query: string; page?: number }>({
       query: ({ query, page = 1 }) => {
         return {
           url: `search/multi?query=${query}&language=en-US&page=${page}`,

@@ -5,6 +5,7 @@
 }
 .itemBox {
   display: flex;
+  position: relative;
   align-items: flex-start;
   margin-bottom: 20px;
   padding: 10px;
@@ -13,7 +14,7 @@
 }
 .sortBox {
   display: flex;
-  gap: 30px;
+  justify-content: space-between;
   align-items: center;
 }
 .itemBox:hover {
@@ -22,6 +23,7 @@
 
 .itemDetails {
   display: flex;
+  position: relative;
   flex-direction: column;
   justify-content: space-between;
   margin-left: 20px;
@@ -76,11 +78,14 @@
 
 .starIcon {
   position: absolute;
-  top: 15px;
-  left: 15px;
+  top: 10px;
+  right: 10px;
   color: gold;
   font-size: 1.5rem;
   z-index: 1;
+}
+.imageAndIcon {
+  position: relative;
 }
 
 @keyframes fadeIn {
@@ -90,19 +95,30 @@
   }
 }
 
+@media (max-width: 1440px) {
+  .sortBox {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
 @media (max-width: 425px) {
   .container {
     padding: 150px 14px 10px 5px;
+  }
+  .sortBox {
+    padding-top: 20px;
   }
 }
 
 @media (max-width: 320px) {
   .container {
-    padding: 15px 14px 15px 10px;
+    padding: 150px 30px 15px 10px;
   }
   .itemBox {
     display: flex;
+    align-content: center;
+    justify-content: center;
     flex-direction: column;
-    align-items: center;
   }
 }

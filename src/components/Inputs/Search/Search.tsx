@@ -25,12 +25,6 @@ export const Search = ({
     setQuery(e.target.value);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      onChange(query);
-    }
-  };
-
   return (
     <div className={styles.searchContainer}>
       <IoSearch className={styles.searchIcon} />
@@ -38,7 +32,6 @@ export const Search = ({
         type="text"
         value={query}
         onChange={handleValue}
-        onKeyDown={handleKeyDown}
         placeholder={placeholder}
         className={styles.input}
         onFocus={onFocus}

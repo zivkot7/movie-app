@@ -1,7 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { movieFilterSlice } from "./movieFilter";
 import { TmdbApi } from "movie-app/Service/Movies";
-import { movieFilterSlice } from "./movieFilter";
 
 export const makeStore = () => {
   return configureStore({

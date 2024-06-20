@@ -1,255 +1,150 @@
 "use client";
-import React from "react";
-import styles from "movie-app/app/movie-discover/style.module.css";
-
-import MovieSection from "movie-app/components/MovieSection";
+import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import styles from "./style.module.css";
+import { FaRegStar, FaStar } from "react-icons/fa";
 import Select from "movie-app/components/Inputs/Select";
+import useSortedData from "movie-app/hooks/useSortedData";
 import { Option } from "movie-app/types/components";
-import useGenreIdByName from "movie-app/hooks/useGenreIdByName";
 import { Button } from "movie-app/components/Button";
 import Pagination from "movie-app/components/Pagination";
-import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
+import { useGetSearchQuery } from "movie-app/Service/Movies";
+import { setFavorites } from "movie-app/app/lib/movieFilter";
 
-import {
-  useGetGenresMoviesQuery,
-  useGetGenresTvQuery,
-  useGetMoviesQuery,
-  useGetNowPlayingMoviesQuery,
-  useGetPopularMoviesQuery,
-  useGetTopRatedMoviesQuery,
-  useGetTvQuery,
-} from "movie-app/Service/Movies";
-import {
-  setCurrentPageMovies,
-  setCurrentPageTv,
-  setMovieType,
-  setSelectedGenresMovie,
-  setSelectedGenresTv,
-} from "movie-app/app/lib/movieFilter";
+export const Search = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortOption, setSortOption] = useState<string>("");
 
-const MovieDiscover = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const {
-    movieTypes,
-    selectedGenresMovie,
-    selectedGenresTv,
-    currentPageMovies,
-    currentPageTv,
-  } = useSelector((state: any) => ({
-    movieTypes: state.movieFilter.movieType,
-    selectedGenresMovie: state.movieFilter.selectedGenresMovie,
-    selectedGenresTv: state.movieFilter.selectedGenresTv,
-    currentPageMovies: state.movieFilter.currentPageMovies,
-    currentPageTv: state.movieFilter.currentPageTv,
-  }));
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q");
 
-  const genreStringMovie =
-    selectedGenresMovie.length > 0 ? selectedGenresMovie : "";
-  const genreStringTv = selectedGenresTv.length > 0 ? selectedGenresTv : "";
-
-  const { data: MovieGenres } = useGetGenresMoviesQuery();
-  const { data: TvShowsGenres } = useGetGenresTvQuery();
-  const { data: TopRatedMovies } = useGetTopRatedMoviesQuery();
-  const { data: PopularMovies } = useGetPopularMoviesQuery();
-  const { data: NowPlayingMovies } = useGetNowPlayingMoviesQuery();
-  const isMovie = movieTypes.includes("movie");
-  const isSerie = movieTypes.includes("tv");
-
-  const { data: AllMovies, isFetching: isFetchingMovies } = useGetMoviesQuery(
-    { genres: genreStringMovie, page: currentPageMovies },
-    { skip: !isMovie }
+  const favorites = useSelector(
+    (state: RootState) => state.movieFilter.favorites
   );
 
-  const { data: AllTvShows, isFetching: isFetchingTvShows } = useGetTvQuery(
-    { genres: genreStringTv, page: currentPageTv },
-    { skip: !isSerie }
+  const cachedData = useSelector(
+    (state: any) =>
+      state.tmdbApi.queries[
+        `getSearch({"page":${currentPage},"query":"${query}"})`
+      ]
   );
 
-  const horrorGenreId = useGenreIdByName("Horror");
-  const actionGenreId = useGenreIdByName("Action");
-  const crimeGenreId = useGenreIdByName("Crime");
-
-  const { data: HorrorMovies, isLoading: horrorLoading } = useGetMoviesQuery(
-    { genres: [horrorGenreId] },
-    { skip: !horrorGenreId }
-  );
-  const { data: ActionMovies, isLoading: actionLoading } = useGetMoviesQuery(
-    { genres: [actionGenreId] },
-    { skip: !actionGenreId }
-  );
-  const { data: CrimeMovies, isLoading: crimeLoading } = useGetMoviesQuery(
-    { genres: [crimeGenreId] },
-    { skip: !crimeGenreId }
+  const { data: searchData } = useGetSearchQuery(
+    { query, page: currentPage },
+    { skip: !!cachedData }
   );
 
-  const optionsMovie: Option<number>[] =
-    MovieGenres?.genres.map((genre: Genre) => ({
-      value: genre.id,
-      label: genre.name,
-    })) || [];
+  const sortedData = useSortedData(cachedData, sortOption);
 
-  const optionsTvShow: Option<number>[] =
-    TvShowsGenres?.genres.map((genre: Genre) => ({
-      value: genre.id,
-      label: genre.name,
-    })) || [];
-
-  const handleGenreChange = (
-    value: number | number[],
-    type: "movies" | "tvShows"
-  ) => {
-    if (type === "movies") {
-      if (Array.isArray(value)) {
-        dispatch(setSelectedGenresMovie(value));
-      } else {
-        dispatch(setSelectedGenresMovie([value]));
-      }
-    } else if (type === "tvShows") {
-      if (Array.isArray(value)) {
-        dispatch(setSelectedGenresTv(value));
-      } else {
-        dispatch(setSelectedGenresTv([value]));
-      }
-    }
+  const handleMovieClick = (id: number, mediaType: string) => {
+    router.push(`/movie-discover/${mediaType}/${id}`);
   };
 
-  const handleHeaderButtonClick = (type: string) => {
-    switch (type) {
-      case "home":
-        dispatch(setMovieType({}));
-        break;
-      case "movies":
-        dispatch(setMovieType({ type: "MOVIE" }));
-        break;
-      case "tv":
-        dispatch(setMovieType({ type: "TV" }));
-        break;
-      default:
-        break;
-    }
-  };
+  const options: Option<string>[] = [
+    { value: "movie", label: "Movie" },
+    { value: "tv", label: "TV" },
+    { value: "year-asc", label: "Year Asc" },
+    { value: "year-desc", label: "Year Desc" },
+  ];
 
-  const handlePageChangeMovies = (page: number) => {
-    dispatch(setCurrentPageMovies(page));
+  const handleSortChange = (option: Option<string>) => {
+    setSortOption(option);
   };
 
   const handlePageChangeTv = (page: number) => {
-    dispatch(setCurrentPageTv(page));
+    setCurrentPage(page);
   };
 
-  const handleMovieClick = (id: number, type: string) => {
-    router.push(`/movie-discover/${type}/${id}`);
+  const onFavoriteClick = (
+    event: React.MouseEvent<SVGSVGElement, MouseEvent>,
+    result: SearchResult
+  ) => {
+    event?.stopPropagation();
+    dispatch(setFavorites(result));
   };
-
-  const isLoading =
-    isFetchingMovies ||
-    isFetchingTvShows ||
-    horrorLoading ||
-    actionLoading ||
-    crimeLoading;
-
-  if (isLoading) {
-    return <div className={styles.loader}>Loading...</div>;
-  }
 
   return (
     <div className={styles.container}>
-      <Button onClick={() => handleHeaderButtonClick("home")} variant="clear">
-        Home
-      </Button>
-      <div className={styles.moviesGenres}>
-        <Button
-          onClick={() => handleHeaderButtonClick("movies")}
-          variant="clear"
-        >
-          Movies
-        </Button>
-        <Button onClick={() => handleHeaderButtonClick("tv")} variant="clear">
-          Series
-        </Button>
-        {isMovie || isSerie ? (
-          <Select<number>
-            options={isMovie ? optionsMovie : optionsTvShow}
-            value={isMovie ? selectedGenresMovie : selectedGenresTv}
-            onChange={(value) =>
-              handleGenreChange(value, isMovie ? "movies" : "tvShows")
+      {cachedData && cachedData.status === "fulfilled" ? (
+        <div>
+          <div className={styles.sortBox}>
+            <Select<string>
+              options={options}
+              onChange={handleSortChange}
+              value={sortOption}
+              placeholder="Sort by"
+            />
+            <Button variant="secondary" onClick={() => setSortOption("")}>
+              X Reset
+            </Button>
+          </div>
+          {sortedData
+            .filter((item: SearchResult) => item.media_type !== "person")
+            .map((result: SearchResult) => (
+              <div
+                key={result.id}
+                className={`${styles.itemBox} ${styles.fadeIn}`}
+                onClick={() => handleMovieClick(result.id, result.media_type)}
+              >
+                <div className={styles.imageAndIcon}>
+                  <Image
+                    src={`https://image.tmdb.org/t/p/w500${result?.poster_path}`}
+                    alt={"Movie poster"}
+                    width={250}
+                    height={300}
+                    quality={100}
+                  />
+                  {favorites.some((fav: Favorite) => fav.id === result.id) ? (
+                    <FaStar
+                      className={styles.starIcon}
+                      onClick={(
+                        event: React.MouseEvent<SVGSVGElement, MouseEvent>
+                      ) => onFavoriteClick(event, result)}
+                    />
+                  ) : (
+                    <FaRegStar
+                      className={styles.starIcon}
+                      onClick={(
+                        event: React.MouseEvent<SVGSVGElement, MouseEvent>
+                      ) => onFavoriteClick(event, result)}
+                    />
+                  )}
+                </div>
+                <div className={styles.itemDetails}>
+                  <div className={styles.titleYear}>
+                    <p className={styles.title}>
+                      {result.title ||
+                        result.original_title ||
+                        result.original_name}
+                    </p>
+                    <p className={styles.year}>
+                      ({result.release_date || result.first_air_date})
+                    </p>
+                  </div>
+                  <p>{result.media_type}</p>
+                  <p className={styles.vote}>
+                    Vote: {result.vote_average?.toFixed(1)}
+                  </p>
+                </div>
+              </div>
+            ))}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={
+              cachedData?.data?.total_pages || searchData?.total_pages || 1
             }
-            placeholder={isMovie ? "Movies" : "Tv Shows"}
-            multiSelect
-          />
-        ) : null}
-      </div>
-
-      {isMovie && (
-        <div className={`${styles.listBox} ${styles.fadeIn}`}>
-          <MovieSection
-            type="movie"
-            onClick={handleMovieClick}
-            title="All movies:"
-            movies={AllMovies?.results || []}
-            isCompactLayout
-          />
-          <Pagination
-            currentPage={currentPageMovies}
-            totalPages={AllMovies?.total_pages || 1}
-            onPageChange={handlePageChangeMovies}
-          />
-        </div>
-      )}
-      {isSerie && (
-        <div className={`${styles.listBox} ${styles.fadeIn}`}>
-          <MovieSection
-            type="tv"
-            onClick={handleMovieClick}
-            title="All series:"
-            movies={AllTvShows?.results || []}
-            isCompactLayout
-          />
-          <Pagination
-            currentPage={currentPageTv}
-            totalPages={AllTvShows?.total_pages || 1}
             onPageChange={handlePageChangeTv}
           />
         </div>
-      )}
-      {!isSerie && !isMovie && (
-        <div className={styles.fadeIn}>
-          <MovieSection
-            onClick={handleMovieClick}
-            title="Now playing:"
-            movies={NowPlayingMovies?.results || []}
-          />
-          <MovieSection
-            onClick={handleMovieClick}
-            title="Top Rated:"
-            movies={TopRatedMovies?.results || []}
-          />
-          <MovieSection
-            onClick={handleMovieClick}
-            title="Popular:"
-            movies={PopularMovies?.results || []}
-          />
-          <MovieSection
-            title="Action:"
-            movies={ActionMovies?.results || []}
-            onClick={handleMovieClick}
-          />
-          <MovieSection
-            title="Crime:"
-            movies={CrimeMovies?.results || []}
-            onClick={handleMovieClick}
-          />
-          <MovieSection
-            title="Horror:"
-            movies={HorrorMovies?.results || []}
-            onClick={handleMovieClick}
-          />
-        </div>
+      ) : (
+        <div className={styles.loader}>Loading...</div>
       )}
     </div>
   );
 };
 
-export default MovieDiscover;
+export default Search;

@@ -60,7 +60,6 @@ function Navbar() {
       ? selectedValue[0]
       : selectedValue;
     const fav = favorites.find((fav: Favorite) => fav.id === favId);
-    console.log(fav);
     if (fav) {
       if (fav.type) {
         router.push(`/movie-discover/${fav.type}/${fav.id}`);

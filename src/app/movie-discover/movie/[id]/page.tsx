@@ -14,7 +14,7 @@ const MovieDetails = () => {
       <div className={styles.backgroundImage}>
         <Image
           src={`https://image.tmdb.org/t/p/w500${Movie?.poster_path}`}
-          alt={'Movie poster'}
+          alt={"Movie poster"}
           layout="fill"
           objectFit="cover"
           quality={100}

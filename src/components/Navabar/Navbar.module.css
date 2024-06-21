@@ -24,12 +24,17 @@
   cursor: pointer;
   color: #fbc500;
   font-weight: 500px;
+  margin-right: 50px;
 }
 .inputsBox {
   display: flex;
   align-items: center;
   gap: 20px;
   position: relative;
+}
+.titleAndBtn {
+  display: flex;
+  align-items: center;
 }
 
 @media (max-width: 1024px) {

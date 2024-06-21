@@ -4,6 +4,7 @@ import styles from "./MovieCard.module.css";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { setFavorites } from "movie-app/app/lib/movieFilter";
+import { selectFavorites } from "movie-app/app/lib/selectors";
 
 interface MovieCardProps {
   type: "movie" | "tv";
@@ -39,9 +40,7 @@ interface MovieCardProps {
 
 const MovieCard = ({ movie, type }: MovieCardProps) => {
   const dispatch = useDispatch();
-  const favorites = useSelector(
-    (state: RootState) => state.movieFilter.favorites
-  );
+  const favorites = useSelector(selectFavorites);
 
   const movieDetails = {
     displayTitle: type === "movie" ? movie?.title : movie?.name,
@@ -81,6 +80,7 @@ const MovieCard = ({ movie, type }: MovieCardProps) => {
                 width={330}
                 height={350}
                 layout="responsive"
+                priority
               />
               {favorites.some((fav: Favorite) => fav.id === movie.id) ? (
                 <FaStar

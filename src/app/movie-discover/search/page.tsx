@@ -12,6 +12,7 @@ import { Button } from "movie-app/components/Button";
 import Pagination from "movie-app/components/Pagination";
 import { useGetSearchQuery } from "movie-app/Service/Movies";
 import { setFavorites } from "movie-app/app/lib/movieFilter";
+import { selectFavorites } from "movie-app/app/lib/selectors";
 
 export const Search = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,9 +23,7 @@ export const Search = () => {
   const searchParams = useSearchParams();
   const query = searchParams.get("q");
 
-  const favorites = useSelector(
-    (state: RootState) => state.movieFilter.favorites
-  );
+  const favorites = useSelector(selectFavorites);
 
   const cachedData = useSelector(
     (state: any) =>

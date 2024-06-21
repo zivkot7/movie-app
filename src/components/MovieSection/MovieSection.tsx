@@ -4,6 +4,7 @@ import styles from "./MovieSection.module.css";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { setFavorites } from "movie-app/app/lib/movieFilter";
+import { selectFavorites } from "movie-app/app/lib/selectors";
 
 interface Movie {
   id: number;
@@ -29,9 +30,7 @@ export const MovieSection = ({
 }: MovieSectionProps) => {
   const movieListRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-  const favorites = useSelector(
-    (state: RootState) => state.movieFilter.favorites
-  );
+  const favorites = useSelector(selectFavorites);
 
   const scrollLeft = () => {
     if (movieListRef.current) {

@@ -116,9 +116,6 @@ const MovieDiscover = () => {
 
   const handleHeaderButtonClick = (type: string) => {
     switch (type) {
-      case "home":
-        dispatch(setMovieType({}));
-        break;
       case "movies":
         dispatch(setMovieType({ type: "MOVIE" }));
         break;
@@ -155,9 +152,6 @@ const MovieDiscover = () => {
 
   return (
     <div className={styles.container}>
-      <Button onClick={() => handleHeaderButtonClick("home")} variant="clear">
-        Home
-      </Button>
       <div className={styles.moviesGenres}>
         <Button
           onClick={() => handleHeaderButtonClick("movies")}

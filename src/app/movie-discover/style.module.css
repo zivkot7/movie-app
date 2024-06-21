@@ -59,8 +59,28 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .container {
+    padding: 150px 0px;
+  }
+  .moviesGenres {
+    display: flex;
+    justify-content: center;
+  }
+}
+
 @media (max-width: 425px) {
   .container {
     padding: 200px 0px;
+  }
+  .moviesGenres {
+    padding-right: 100px;
+  }
+}
+
+@media (max-width: 425px) {
+  .moviesGenres {
+    display: flex;
+    flex-wrap: wrap;
   }
 }

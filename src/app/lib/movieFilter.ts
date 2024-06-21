@@ -41,12 +41,12 @@ export const movieFilterSlice = createSlice({
     },
     setFavorites: (state, { payload }) => {
       const exists = state.favorites.some(
-        (movie: any) => movie.id === payload.id
+        (movie: Movie) => movie.id === payload.id
       );
 
       if (exists) {
         state.favorites = state.favorites.filter(
-          (movie: any) => movie.id !== payload.id
+          (movie: Movie) => movie.id !== payload.id
         );
       } else {
         state.favorites.push(payload);

@@ -50,3 +50,10 @@
   align-items: center;
   gap: 10px;
 }
+
+@media (max-width: 768px) {
+  .columnWrapper {
+    column-count: 1;
+    column-gap: 0;
+  }
+}

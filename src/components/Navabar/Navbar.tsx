@@ -6,18 +6,23 @@ import { Option } from "movie-app/types/components";
 import SearchSelector from "../SearchSelector";
 import { usePathname, useRouter } from "next/navigation";
 import { useGetSearchQuery } from "movie-app/Service/Movies";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import FavoriteOption from "../FavoriteOption";
+import {
+  selectFavoriteById,
+  selectFavorites,
+} from "movie-app/app/lib/selectors";
+import { Button } from "../Button";
+import { setMovieType } from "movie-app/app/lib/movieFilter";
 
 function Navbar() {
   const [query, setQuery] = useState("");
 
   const pathname = usePathname();
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  const { favorites } = useSelector((state: RootState) => ({
-    favorites: state.movieFilter.favorites,
-  }));
+  const favorites = useSelector(selectFavorites);
 
   const { data } = useGetSearchQuery({ query });
 
@@ -44,7 +49,12 @@ function Navbar() {
   }, [pathname]);
 
   const handleHomeClick = () => {
-    router.push(`/`);
+    router.push("/movie-discover");
+    dispatch(setMovieType({}));
+  };
+
+  const handleMovieAppClick = () => {
+    router.push("/");
   };
 
   const handleViewAllClick = (query: string) => {
@@ -56,16 +66,11 @@ function Navbar() {
   };
 
   const handleFavoritesChange = (selectedValue: number | number[]) => {
-    const favId = Array.isArray(selectedValue)
-      ? selectedValue[0]
-      : selectedValue;
-    const fav = favorites.find((fav: Favorite) => fav.id === favId);
+    const fav = favorites.find((fav: Favorite) => fav.id === selectedValue);
     if (fav) {
-      if (fav.type) {
-        router.push(`/movie-discover/${fav.type}/${fav.id}`);
-      } else if (fav.media_type) {
-        router.push(`/movie-discover/${fav.media_type}/${fav.id}`);
-      }
+      const mediaType =
+        fav.type === "movie" || fav.media_type === "movie" ? "movie" : "tv";
+      router.push(`/movie-discover/${mediaType}/${fav.id}`);
     }
   };
 
@@ -78,9 +83,14 @@ function Navbar() {
 
   return (
     <div className={containerStyle}>
-      <h2 className={styles.title} onClick={handleHomeClick}>
-        MovieApp
-      </h2>
+      <div className={styles.titleAndBtn}>
+        <h2 className={styles.title} onClick={handleMovieAppClick}>
+          MovieApp
+        </h2>
+        <Button onClick={handleHomeClick} variant="clear">
+          Home
+        </Button>
+      </div>
       <div className={styles.inputsBox}>
         <SearchSelector
           query={query}
